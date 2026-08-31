@@ -111,6 +111,28 @@ Vercel wystawia sam, nic nie trzeba robić.
 
 ---
 
+## ⚠️ Limit 100 MB na pliki statyczne
+
+Plan Hobby pozwala wysłać **100 MB plików statycznych** na deployment. To osobny
+limit niż rozmiar repozytorium i **build przechodzi, a dopiero wysyłka wyniku
+pada** — w logu widać wtedy „Compiled successfully" i nic więcej.
+
+Aktualny stan sprawdzisz komendą:
+
+```bash
+du -ck $(git ls-files 'public/*') | tail -1
+```
+
+Jeśli zbliżasz się do 100 MB przy dokładaniu materiałów, masz trzy drogi:
+
+1. **Zejść z bitrate'em** — shorty przy 720×1280 wyglądają dobrze już od ~1100 kbps,
+   a wyświetlają się w kolumnie 300 px.
+2. **Przenieść cięższe pliki do Vercel Blob**, tak jak case study — wtedy nie liczą
+   się do limitu wcale.
+3. **Plan Pro** — limit rośnie do 1 GB.
+
+---
+
 ## 5. Sprawdź po wejściu na żywo
 
 - [ ] `https://patrynciomovement.com` otwiera się i przekierowuje na HTTPS
