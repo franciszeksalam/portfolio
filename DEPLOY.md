@@ -26,7 +26,17 @@ z kodem.
 
 ---
 
-## 1. Film do Vercel Blob
+## 1. Film do Vercel Blob — ✅ ZROBIONE
+
+Plik jest już wgrany i sprawdzony:
+`https://gdkngf6ew4iofoob.public.blob.vercel-storage.com/case-study.mp4`
+
+Weryfikacja: `206 Partial Content`, `accept-ranges: bytes`, rozmiar zgodny co do
+bajta (219 880 552 B), przewinięcie do 20:13 w **125 ms**. Możesz przejść do kroku 2.
+
+<details>
+<summary>Jak to było zrobione (gdybyś kiedyś podmieniał film)</summary>
+
 
 1. Załóż konto na [vercel.com](https://vercel.com) (przycisk **Continue with GitHub** — konto GitHub przyda się w kroku 2).
 2. W panelu: **Storage → Create Database → Blob → Create**.
@@ -35,7 +45,8 @@ z kodem.
 5. Skopiuj publiczny adres pliku — wygląda tak:
    `https://xxxxxxxx.public.blob.vercel-storage.com/case-study-xxxx.mp4`
 
-Zachowaj ten adres, wklejasz go w kroku 3.
+Adres wklejasz jako `NEXT_PUBLIC_CASE_STUDY_URL` i robisz redeploy.
+</details>
 
 ---
 
@@ -66,7 +77,7 @@ Wysyłka ~112 MB potrwa chwilę.
 | `RESEND_API_KEY` | Twój klucz z resend.com (ten sam co w `.env.local`) |
 | `MAIL_FROM` | `Portfolio <onboarding@resend.dev>` |
 | `CONTACT_TO` | `patgrabowski11@gmail.com` |
-| `NEXT_PUBLIC_CASE_STUDY_URL` | adres pliku z kroku 1 |
+| `NEXT_PUBLIC_CASE_STUDY_URL` | `https://gdkngf6ew4iofoob.public.blob.vercel-storage.com/case-study.mp4` |
 
 4. **Deploy**. Po 2–3 minutach dostaniesz adres `nazwa.vercel.app` — sprawdź, czy
    wszystko działa, zanim podepniesz domenę.
