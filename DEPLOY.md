@@ -1,4 +1,4 @@
-# Wdrożenie na patrynciomovement.com
+# Wdrożenie na patrynciomovement.pl
 
 Stan: projekt jest **gotowy do wdrożenia**. Poniżej tylko to, czego nie mogłem
 zrobić za Ciebie, bo wymaga logowania na Twoje konta.
@@ -88,14 +88,14 @@ Wysyłka ~112 MB potrwa chwilę.
 
 ## 4. Domena i DNS w home.pl
 
-**W Vercelu:** Settings → **Domains** → **Add Domain** → wpisz `patrynciomovement.com`
+**W Vercelu:** Settings → **Domains** → **Add Domain** → wpisz `patrynciomovement.pl`
 → zatwierdź propozycję dodania też `www`.
 
 Vercel pokaże teraz konkretne wartości do wpisania. **Przepisz je dokładnie z panelu** —
 adres CNAME jest indywidualny dla projektu (wygląda jak `d1d4fc829fe7bc7c.vercel-dns-017.com`)
 i nie da się go zgadnąć.
 
-**W home.pl:** panel → **Domeny** → `patrynciomovement.com` → **Strefa DNS / Rekordy DNS**.
+**W home.pl:** panel → **Domeny** → `patrynciomovement.pl` → **Strefa DNS / Rekordy DNS**.
 
 | Typ | Nazwa (host) | Wartość | TTL |
 |---|---|---|---|
@@ -135,15 +135,15 @@ Jeśli zbliżasz się do 100 MB przy dokładaniu materiałów, masz trzy drogi:
 
 ## 5. Sprawdź po wejściu na żywo
 
-- [ ] `https://patrynciomovement.com` otwiera się i przekierowuje na HTTPS
-- [ ] `www.patrynciomovement.com` prowadzi w to samo miejsce
+- [ ] `https://patrynciomovement.pl` otwiera się i przekierowuje na HTTPS
+- [ ] `www.patrynciomovement.pl` prowadzi w to samo miejsce
 - [ ] showreel leci w tle hero
 - [ ] sekcja 03 — case study startuje i przeskakuje między etapami (leci z Bloba)
 - [ ] shorty i materiały w sekcjach 04–05 odtwarzają się
 - [ ] **formularz**: wyślij testowe zgłoszenie i sprawdź, czy przyszło na
       `patgrabowski11@gmail.com` oraz czy „Odpowiedz" podstawia adres nadawcy
 - [ ] wklej link na Messengerze — powinien pokazać obrazek z nagłówkiem strony
-- [ ] `patrynciomovement.com/robots.txt` i `/sitemap.xml` odpowiadają
+- [ ] `patrynciomovement.pl/robots.txt` i `/sitemap.xml` odpowiadają
 
 ---
 
