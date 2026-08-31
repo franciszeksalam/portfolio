@@ -13,7 +13,7 @@ export const site = {
   role: "Video Editor · Storyteller",
   location: "Polska · zdalnie",
   /** adres produkcyjny — używany w metadanych, sitemapie i canonicalu */
-  url: "https://patrynciomovement.pl",
+  url: "https://patrynciomovement.com",
   /** adres pokazywany na stronie i domyślny odbiorca formularza */
   email: "patgrabowski11@gmail.com",
   calendarUrl: "",                          // opcjonalnie: link do Cal.com / Calendly

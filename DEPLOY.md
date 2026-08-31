@@ -1,195 +1,138 @@
-# Wdrożenie na patrynciomovement.pl
+# Wdrożenie na patrynciomovement.com
 
-> Uwaga: adres `.com` **nie jest zarejestrowany** — rejestr .com zwraca „No match".
-> Twoja domena to wersja **`.pl`**, widoczna na serwerach home.pl.
+Stan: projekt jest **gotowy do wdrożenia**. Poniżej tylko to, czego nie mogłem
+zrobić za Ciebie, bo wymaga logowania na Twoje konta.
 
-Hosting: **Vercel** (twórcy Next.js, darmowy plan wystarcza).
-Domena: **home.pl** — tam zmieniasz tylko dwa wpisy DNS.
-
-Czas: około 30 minut, z czego 20 to czekanie na DNS.
+Cała droga zamyka się w darmowym planie Vercela (Hobby). Nic nie trzeba wykupywać.
 
 ---
 
-## Zanim zaczniesz — jedna decyzja
+## Dlaczego akurat tak
 
-Film w sekcji „Storytelling" (`case-study.mp4`) waży **210 MB**. To jedyny plik,
-który wymaga uwagi.
+Case study trwa 29:51 i waży **210 MB**. To zderza się z dwoma twardymi limitami:
 
-**Droga A — spróbuj wysłać go razem ze stroną.** Nic nie konfigurujesz, plik leci
-z resztą projektu przy `vercel deploy`. Zacznij od tego. Jeśli Vercel go
-przyjmie — temat zamknięty.
+| Limit | Wartość | Źródło |
+|---|---|---|
+| Pojedynczy plik w repozytorium | 100 MB | GitHub, blokada twarda |
+| Pliki źródłowe przy deployu z CLI | 100 MB (Hobby) / 1 GB (Pro) | dokumentacja Vercela |
 
-**Droga B — jeśli Vercel odmówi albo strona zacznie zjadać transfer.** Film ląduje
-na zewnętrznym hostingu, a w kodzie zmienia się jedna linijka. Instrukcja na
-końcu tego pliku.
+Dlatego film **nie leży w repozytorium**. Trafia do **Vercel Blob** (limit pliku:
+5 TB, w darmowym planie 5 GB miejsca i 100 GB transferu), a strona pobiera go
+z adresu w zmiennej środowiskowej. Film zostaje w pełnej długości — nic nie
+skracamy. Repozytorium schodzi do **112 MB**, największy plik ma 12 MB.
 
-Plik jest celowo **poza repozytorium git** (GitHub odrzuca pliki > 100 MB), ale
-leży na dysku i `vercel deploy` go wyśle.
+Reszta materiałów zostaje w repo, bo są małe i dzięki temu wersjonują się razem
+z kodem.
 
 ---
 
-## 1. Konto i logowanie
+## 1. Film do Vercel Blob
 
-1. Załóż konto na [vercel.com](https://vercel.com) — zaloguj się przez GitHub
-   albo e-mailem, bez różnicy.
+1. Załóż konto na [vercel.com](https://vercel.com) (przycisk **Continue with GitHub** — konto GitHub przyda się w kroku 2).
+2. W panelu: **Storage → Create Database → Blob → Create**.
+3. Wejdź w utworzony store → zakładka **Browser** → **Upload**.
+4. Wgraj plik: `public/media/story/case-study.mp4` (210 MB, wysyłka potrwa kilka minut).
+5. Skopiuj publiczny adres pliku — wygląda tak:
+   `https://xxxxxxxx.public.blob.vercel-storage.com/case-study-xxxx.mp4`
+
+Zachowaj ten adres, wklejasz go w kroku 3.
+
+---
+
+## 2. Kod na GitHuba
+
+Repozytorium jest już zainicjowane i ma pierwszy commit. Zostaje wypchnięcie:
+
+1. Na [github.com/new](https://github.com/new) utwórz repozytorium — nazwa dowolna,
+   widoczność **Private**, **bez** dodawania README i .gitignore.
 2. W terminalu, w katalogu projektu:
 
 ```bash
-npx vercel login
+git remote add origin https://github.com/TWOJA-NAZWA/NAZWA-REPO.git && git branch -M main && git push -u origin main
 ```
 
-Podaj ten sam adres, na który zakładałeś konto, i kliknij link z maila.
+Wysyłka ~112 MB potrwa chwilę.
 
 ---
 
-## 2. Pierwszy deploy testowy
+## 3. Projekt na Vercelu
 
-```bash
-npx vercel
-```
+1. Panel Vercela → **Add New → Project** → **Import Git Repository** → wybierz repo.
+2. Framework zostanie wykryty jako Next.js — nic nie zmieniaj.
+3. Przed kliknięciem **Deploy** rozwiń **Environment Variables** i dodaj cztery:
 
-Pytania, które zada:
-
-| Pytanie | Odpowiedź |
+| Nazwa | Wartość |
 |---|---|
-| Set up and deploy? | **y** |
-| Which scope? | Twoje konto |
-| Link to existing project? | **n** |
-| Project name? | `patryncio-movement` (Enter przyjmuje domyślną) |
-| In which directory is your code? | `./` (Enter) |
-| Modify settings? | **n** |
+| `RESEND_API_KEY` | Twój klucz z resend.com (ten sam co w `.env.local`) |
+| `MAIL_FROM` | `Portfolio <onboarding@resend.dev>` |
+| `CONTACT_TO` | `patgrabowski11@gmail.com` |
+| `NEXT_PUBLIC_CASE_STUDY_URL` | adres pliku z kroku 1 |
 
-Dostaniesz adres typu `patryncio-movement-xxxx.vercel.app`. Otwórz go i sprawdź,
-czy wszystko działa — **poza formularzem**, bo nie ma jeszcze kluczy.
+4. **Deploy**. Po 2–3 minutach dostaniesz adres `nazwa.vercel.app` — sprawdź, czy
+   wszystko działa, zanim podepniesz domenę.
 
-Jeśli w tym miejscu pojawi się błąd o zbyt dużym pliku — przejdź do **Drogi B**
-na końcu.
+> Zmienne wczytują się **przy buildzie**. Jeśli dodasz je później, zrób redeploy.
 
 ---
 
-## 3. Zmienne środowiskowe (formularz kontaktowy)
+## 4. Domena i DNS w home.pl
+
+**W Vercelu:** Settings → **Domains** → **Add Domain** → wpisz `patrynciomovement.com`
+→ zatwierdź propozycję dodania też `www`.
+
+Vercel pokaże teraz konkretne wartości do wpisania. **Przepisz je dokładnie z panelu** —
+adres CNAME jest indywidualny dla projektu (wygląda jak `d1d4fc829fe7bc7c.vercel-dns-017.com`)
+i nie da się go zgadnąć.
+
+**W home.pl:** panel → **Domeny** → `patrynciomovement.com` → **Strefa DNS / Rekordy DNS**.
+
+| Typ | Nazwa (host) | Wartość | TTL |
+|---|---|---|---|
+| A | `@` (domena główna) | `76.76.21.21` | 3600 |
+| CNAME | `www` | wartość z panelu Vercela | 3600 |
+
+Usuń stare rekordy A i CNAME dla `@` i `www`, jeśli home.pl ustawił własne
+(zwykle kierują na stronę parkingową) — inaczej będą się gryzły z nowymi.
+
+Propagacja zwykle trwa kilkanaście minut, czasem do kilku godzin. W Vercelu przy
+domenie pojawi się zielony status **Valid Configuration**. Certyfikat HTTPS
+Vercel wystawia sam, nic nie trzeba robić.
+
+---
+
+## 5. Sprawdź po wejściu na żywo
+
+- [ ] `https://patrynciomovement.com` otwiera się i przekierowuje na HTTPS
+- [ ] `www.patrynciomovement.com` prowadzi w to samo miejsce
+- [ ] showreel leci w tle hero
+- [ ] sekcja 03 — case study startuje i przeskakuje między etapami (leci z Bloba)
+- [ ] shorty i materiały w sekcjach 04–05 odtwarzają się
+- [ ] **formularz**: wyślij testowe zgłoszenie i sprawdź, czy przyszło na
+      `patgrabowski11@gmail.com` oraz czy „Odpowiedz" podstawia adres nadawcy
+- [ ] wklej link na Messengerze — powinien pokazać obrazek z nagłówkiem strony
+- [ ] `patrynciomovement.com/robots.txt` i `/sitemap.xml` odpowiadają
+
+---
+
+## 6. Publikowanie zmian
+
+Po podpięciu repozytorium każdy `git push` na `main` uruchamia nowy deploy:
 
 ```bash
-npx vercel env add RESEND_API_KEY production
+git add -A && git commit -m "opis zmiany" && git push
 ```
 
-Wklej klucz z `.env.local` (ten zaczynający się od `re_`). Powtórz dla dwóch
-pozostałych:
-
-```bash
-npx vercel env add MAIL_FROM production
-```
-
-wartość: `Portfolio <onboarding@resend.dev>`
-
-```bash
-npx vercel env add CONTACT_TO production
-```
-
-wartość: `patgrabowski11@gmail.com`
-
-> To samo możesz zrobić klikając: panel Vercel → projekt → **Settings** →
-> **Environment Variables**.
+Podmiana materiału: wrzuć plik pod tę samą ścieżkę w `public/media/`, zrób commit
+i push. Wyjątek to case study — ten podmienia się w panelu Blob, a jeśli zmieni się
+adres, trzeba zaktualizować `NEXT_PUBLIC_CASE_STUDY_URL` i zrobić redeploy.
 
 ---
 
-## 4. Deploy produkcyjny
+## Do uzupełnienia przed pokazaniem klientom
 
-```bash
-npx vercel --prod
-```
-
-Od teraz ta jedna komenda publikuje każdą zmianę.
-
----
-
-## 5. Podpięcie domeny
-
-W panelu Vercel: projekt → **Settings** → **Domains** → wpisz
-`patrynciomovement.pl` → **Add**. Dodaj też `www.patrynciomovement.pl` —
-Vercel sam ustawi przekierowanie na wersję bez `www`.
-
-Vercel pokaże, jakich wpisów DNS oczekuje. Powinny być dokładnie takie:
-
-| Typ | Nazwa | Wartość |
-|---|---|---|
-| A | `@` | `76.76.21.21` |
-| CNAME | `www` | `cname.vercel-dns.com` |
-
----
-
-## 6. DNS w home.pl
-
-1. Zaloguj się do [home.pl](https://home.pl) → **Panel klienta**.
-2. **Usługi WWW i domeny** → wybierz `patrynciomovement.pl`.
-3. Wejdź w **Strefa DNS** (bywa też jako „Konfiguracja DNS" lub „Rekordy DNS").
-4. Strefa tej domeny jest **pusta** — sprawdziłem, nie ma żadnych rekordów `A`,
-   `www` ani `MX`. Nie musisz niczego usuwać, tylko dodać.
-5. Dodaj dwa rekordy:
-
-```
-Typ: A       Nazwa: @      Wartość: 76.76.21.21      TTL: 3600
-Typ: CNAME   Nazwa: www    Wartość: cname.vercel-dns.com     TTL: 3600
-```
-
-6. Zapisz.
-
-> Domena nie ma skonfigurowanej poczty (brak rekordów MX), więc nic tu nie zepsujesz.
-
-Propagacja zajmuje od kilku minut do 2 godzin. W panelu Vercel przy domenie
-pojawi się zielony status, a certyfikat SSL wystawi się sam.
-
-Postęp sprawdzisz komendą:
-
-```bash
-dig +short patrynciomovement.pl
-```
-
-Ma zwrócić `76.76.21.21`.
-
----
-
-## 7. Sprawdź po wejściu na żywo
-
-- strona otwiera się pod `https://patrynciomovement.pl` z kłódką
-- `www.patrynciomovement.pl` przekierowuje na wersję bez `www`
-- wszystkie materiały video się odtwarzają
-- **wyślij testowe zgłoszenie formularzem** i sprawdź skrzynkę
-- otwórz na telefonie
-
----
-
-## 8. Publikowanie zmian
-
-```bash
-npx vercel --prod
-```
-
----
-
-## Droga B — film na zewnętrznym hostingu
-
-Potrzebna, jeśli Vercel odrzuci plik 210 MB albo transfer zacznie się kończyć.
-
-**Cloudflare R2** — 10 GB miejsca za darmo i **zerowa opłata za transfer**, co
-przy filmie tej wielkości jest kluczowe.
-
-1. Załóż konto na [cloudflare.com](https://cloudflare.com) → **R2** → **Create bucket**
-   (nazwa np. `patryncio-media`).
-2. Wgraj `public/media/story/case-study.mp4` przez panel.
-3. W ustawieniach bucketa włącz **Public access** (r2.dev) albo podepnij subdomenę.
-4. Skopiuj publiczny adres pliku.
-5. W [`src/data/site.ts`](src/data/site.ts) w sekcji `storytelling.film` podmień:
-
-```ts
-src: "https://TWOJ-ADRES-R2/case-study.mp4",
-```
-
-6. `npx vercel --prod`
-
-Odtwarzacz działa tak samo — przewijanie do timestampów korzysta z zapytań
-zakresowych, które R2 obsługuje.
-
-> Alternatywy: **Bunny.net** (kilka złotych miesięcznie, bardzo dobry CDN pod
-> wideo) albo **Vercel Blob** (wszystko w jednym panelu, ale transfer liczy się
-> do limitu konta).
+- **Linki YouTube i TikTok** w [`src/data/site.ts`](src/data/site.ts) są zgadywane
+  (`youtube.com/@patryncio`, `tiktok.com/@patryncio`) — oznaczone `<- SPRAWDŹ`.
+  Instagram jest potwierdzony.
+- **Nazwy shortów 1–6** — karty pokazują na razie sam format i długość.
+- **Showreel** ma 1024×576, bo takie było źródło. Eksport 1920×1080 pod tą samą
+  nazwą podmieni się sam.
