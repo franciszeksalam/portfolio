@@ -13,7 +13,7 @@ export const site = {
   role: "Video Editor · Storyteller",
   location: "Polska · zdalnie",
   /** adres produkcyjny — używany w metadanych, sitemapie i canonicalu */
-  url: "https://patrynciomovement.com",
+  url: "https://patrynciomovement.pl",
   /** adres pokazywany na stronie i domyślny odbiorca formularza */
   email: "patgrabowski11@gmail.com",
   calendarUrl: "",                          // opcjonalnie: link do Cal.com / Calendly
@@ -272,7 +272,10 @@ export const storytelling = {
   film: {
     title: "1300 km autostopem bez planu",
     meta: "@patryncio · YouTube · 29:52",
-    src: "/media/story/case-study.mp4",
+    /* Film waży 210 MB, więc nie trafia do repozytorium (patrz .gitignore).
+       Na produkcji leci z Vercel Blob — adres w NEXT_PUBLIC_CASE_STUDY_URL.
+       Lokalnie używany jest plik z /public/media/story/. */
+    src: process.env.NEXT_PUBLIC_CASE_STUDY_URL || "/media/story/case-study.mp4",
     poster: "/media/story/case-study.jpg",
     /** Pełny czas trwania filmu w sekundach — używany do rysowania timeline'u. */
     durationSeconds: 1791,

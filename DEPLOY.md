@@ -1,4 +1,7 @@
-# Wdrożenie na patrynciomovement.com
+# Wdrożenie na patrynciomovement.pl
+
+> Uwaga: adres `.com` **nie jest zarejestrowany** — rejestr .com zwraca „No match".
+> Twoja domena to wersja **`.pl`**, widoczna na serwerach home.pl.
 
 Hosting: **Vercel** (twórcy Next.js, darmowy plan wystarcza).
 Domena: **home.pl** — tam zmieniasz tylko dwa wpisy DNS.
@@ -103,7 +106,7 @@ Od teraz ta jedna komenda publikuje każdą zmianę.
 ## 5. Podpięcie domeny
 
 W panelu Vercel: projekt → **Settings** → **Domains** → wpisz
-`patrynciomovement.com` → **Add**. Dodaj też `www.patrynciomovement.com` —
+`patrynciomovement.pl` → **Add**. Dodaj też `www.patrynciomovement.pl` —
 Vercel sam ustawi przekierowanie na wersję bez `www`.
 
 Vercel pokaże, jakich wpisów DNS oczekuje. Powinny być dokładnie takie:
@@ -118,11 +121,11 @@ Vercel pokaże, jakich wpisów DNS oczekuje. Powinny być dokładnie takie:
 ## 6. DNS w home.pl
 
 1. Zaloguj się do [home.pl](https://home.pl) → **Panel klienta**.
-2. **Usługi WWW i domeny** → wybierz `patrynciomovement.com`.
+2. **Usługi WWW i domeny** → wybierz `patrynciomovement.pl`.
 3. Wejdź w **Strefa DNS** (bywa też jako „Konfiguracja DNS" lub „Rekordy DNS").
-4. **Usuń** istniejące rekordy `A` dla `@` oraz `CNAME`/`A` dla `www`
-   (najczęściej wskazują na stronę parkingową home.pl).
-5. Dodaj dwa nowe:
+4. Strefa tej domeny jest **pusta** — sprawdziłem, nie ma żadnych rekordów `A`,
+   `www` ani `MX`. Nie musisz niczego usuwać, tylko dodać.
+5. Dodaj dwa rekordy:
 
 ```
 Typ: A       Nazwa: @      Wartość: 76.76.21.21      TTL: 3600
@@ -131,7 +134,7 @@ Typ: CNAME   Nazwa: www    Wartość: cname.vercel-dns.com     TTL: 3600
 
 6. Zapisz.
 
-> **Nie ruszaj rekordów MX** — odpowiadają za pocztę na tej domenie.
+> Domena nie ma skonfigurowanej poczty (brak rekordów MX), więc nic tu nie zepsujesz.
 
 Propagacja zajmuje od kilku minut do 2 godzin. W panelu Vercel przy domenie
 pojawi się zielony status, a certyfikat SSL wystawi się sam.
@@ -139,7 +142,7 @@ pojawi się zielony status, a certyfikat SSL wystawi się sam.
 Postęp sprawdzisz komendą:
 
 ```bash
-dig +short patrynciomovement.com
+dig +short patrynciomovement.pl
 ```
 
 Ma zwrócić `76.76.21.21`.
@@ -148,8 +151,8 @@ Ma zwrócić `76.76.21.21`.
 
 ## 7. Sprawdź po wejściu na żywo
 
-- strona otwiera się pod `https://patrynciomovement.com` z kłódką
-- `www.patrynciomovement.com` przekierowuje na wersję bez `www`
+- strona otwiera się pod `https://patrynciomovement.pl` z kłódką
+- `www.patrynciomovement.pl` przekierowuje na wersję bez `www`
 - wszystkie materiały video się odtwarzają
 - **wyślij testowe zgłoszenie formularzem** i sprawdź skrzynkę
 - otwórz na telefonie

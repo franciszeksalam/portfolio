@@ -12,3 +12,6 @@ next-env.d.ts
 # Jeśli przejdziesz na wdrażanie przez GitHub — przenieś go na zewnętrzny
 # hosting i podmień `storytelling.film.src` w src/data/site.ts.
 public/media/story/case-study.mp4
+
+# pełny case study (210 MB) — hostowany w Vercel Blob, nie w repo
+public/media/story/case-study.mp4
