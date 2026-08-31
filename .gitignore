@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+.env*.local
+
+# ——— materiały video ————————————————————————————————————————————
+# GitHub odrzuca pliki > 100 MB. Ten film zostaje na dysku i jest wysyłany
+# przy deployu z linii poleceń (vercel deploy), ale nie trafia do repozytorium.
+# Jeśli przejdziesz na wdrażanie przez GitHub — przenieś go na zewnętrzny
+# hosting i podmień `storytelling.film.src` w src/data/site.ts.
+public/media/story/case-study.mp4

@@ -1,0 +1,4 @@
+# Vercel wysyła zawartość katalogu — te rzeczy są niepotrzebne na serwerze
+node_modules
+.next
+.git
