@@ -83,7 +83,6 @@ export function Work() {
                     label={p.title ?? p.kind}
                     index={`0${i + 1} / LONG FORM`}
                     aspect="16/9"
-                    priority={i === 0}
                   />
                   <PlayBadge />
                 </button>

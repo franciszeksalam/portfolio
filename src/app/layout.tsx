@@ -7,7 +7,13 @@ import { site, hero } from "@/data/site";
 
 const inter = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-inter", display: "swap" });
 const display = Inter_Tight({ subsets: ["latin", "latin-ext"], variable: "--font-display", display: "swap" });
-const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+  // używany tylko w drobnych etykietach — nie blokuje pierwszego renderu
+  preload: false,
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),

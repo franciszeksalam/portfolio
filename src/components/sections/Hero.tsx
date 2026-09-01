@@ -125,7 +125,7 @@ function Backdrop() {
         loop
         playsInline
         autoPlay={!reduced}
-        preload="auto"
+        preload="metadata"
         onCanPlay={() => setReady(true)}
         aria-hidden
       >

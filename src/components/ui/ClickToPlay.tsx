@@ -67,7 +67,7 @@ export function ClickToPlay({
           aspect={aspect}
           autoPlay={false}
           loop={false}
-          preload="auto"
+          preload="metadata"
         />
 
         {!playing && (

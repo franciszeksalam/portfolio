@@ -187,7 +187,7 @@ export function BeforeAfter({
           aspect={aspect}
           autoPlay={false}
           loop={false}
-          preload="auto"
+          preload="metadata"
         />
 
         {/* warstwa odsłaniana od LEWEJ */}
@@ -205,7 +205,7 @@ export function BeforeAfter({
             aspect={aspect}
             autoPlay={false}
             loop={false}
-            preload="auto"
+            preload="metadata"
           />
         </div>
 

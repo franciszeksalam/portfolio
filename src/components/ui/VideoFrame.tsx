@@ -27,7 +27,7 @@ export type VideoFrameProps = {
   hasAudio?: boolean;
   /** hero: ładuj od razu */
   priority?: boolean;
-  /** ile buforować po zamontowaniu — "auto" dla materiałów odtwarzanych na klik */
+  /** ile buforować po zamontowaniu */
   preload?: "metadata" | "auto";
   className?: string;
   rounded?: boolean;
@@ -73,6 +73,7 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
   const [muted, setMuted] = useState(true);
   const mutedRef = useRef(true);
   const [hovered, setHovered] = useState(false);
+  const [inView, setInView] = useState(false);
   const reduced = usePrefersReducedMotion();
 
   /* Ref łączony: rodzic dostaje element dokładnie w momencie, w którym powstaje
@@ -89,7 +90,10 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
     [ref]
   );
 
-  /* — lazy load + play/pause w zależności od widoczności ——————————————— */
+  /* — obserwator: montuje materiał i śledzi, czy jest w kadrze ————————
+     Obserwator NIE odtwarza bezpośrednio: przy pierwszym wejściu w kadr
+     element <video> jeszcze nie istnieje. Trzyma tylko stan, a odtwarzaniem
+     zajmuje się efekt niżej, który uruchamia się już po zamontowaniu. */
   useEffect(() => {
     const el = holderRef.current;
     if (!el) return;
@@ -97,28 +101,24 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) setShouldLoad(true);
-        const v = videoRef.current;
-        if (!v) return;
-        if (entry.isIntersecting) {
-          if (autoPlay && !reduced && !playOnHover) v.play().catch(() => {});
-        } else if (!v.paused) {
-          v.pause();
-        }
+        setInView(entry.isIntersecting);
       },
       { rootMargin: "300px 0px", threshold: 0.15 }
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [autoPlay, reduced, playOnHover]);
+  }, []);
 
-  /* — wyciszenie ustawiane imperatywnie ————————————————————————————
-     React nie stosuje niezawodnie propa `muted` na <video> (znany problem),
-     więc bez tego materiały startowałyby z dźwiękiem. */
+  /* — odtwarzanie sterowane stanem ————————————————————————————————— */
   useEffect(() => {
-    mutedRef.current = muted;
     const v = videoRef.current;
-    if (v) v.muted = muted;
-  }, [muted, shouldLoad, failed]);
+    if (!v) return;
+    if (inView && autoPlay && !reduced && !playOnHover) {
+      v.play().catch(() => {});
+    } else if (!inView && !v.paused) {
+      v.pause();
+    }
+  }, [inView, shouldLoad, autoPlay, reduced, playOnHover]);
 
   /* — materiał nieaktywny (np. druga strona przełącznika) ma stać ——— */
   useEffect(() => {
