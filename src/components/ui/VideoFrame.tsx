@@ -90,23 +90,36 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
     [ref]
   );
 
-  /* — obserwator: montuje materiał i śledzi, czy jest w kadrze ————————
-     Obserwator NIE odtwarza bezpośrednio: przy pierwszym wejściu w kadr
-     element <video> jeszcze nie istnieje. Trzyma tylko stan, a odtwarzaniem
-     zajmuje się efekt niżej, który uruchamia się już po zamontowaniu. */
+  /* — dwa obserwatory o różnych zasięgach ————————————————————————
+     Ładowanie startuje z wyprzedzeniem 300 px, żeby materiał był gotowy zanim
+     wjedzie na ekran. Ale ODTWARZANIE dopiero wtedy, gdy naprawdę widać kadr —
+     inaczej telefon dekoduje kilka filmów naraz, w tym takie, których nikt
+     jeszcze nie widzi, i przewijanie zaczyna szarpać.
+
+     Obserwator nie woła play() bezpośrednio: przy pierwszym przecięciu element
+     <video> jeszcze nie istnieje. Trzyma stan, a odtwarzaniem zajmuje się efekt
+     poniżej, uruchamiany już po zamontowaniu. */
   useEffect(() => {
     const el = holderRef.current;
     if (!el) return;
 
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setShouldLoad(true);
-        setInView(entry.isIntersecting);
+    const ladowanie = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) setShouldLoad(true);
       },
-      { rootMargin: "300px 0px", threshold: 0.15 }
+      { rootMargin: "300px 0px" }
     );
-    io.observe(el);
-    return () => io.disconnect();
+    const odtwarzanie = new IntersectionObserver(([e]) => setInView(e.isIntersecting), {
+      rootMargin: "0px",
+      threshold: 0.25,
+    });
+
+    ladowanie.observe(el);
+    odtwarzanie.observe(el);
+    return () => {
+      ladowanie.disconnect();
+      odtwarzanie.disconnect();
+    };
   }, []);
 
   /* — odtwarzanie sterowane stanem ————————————————————————————————— */
