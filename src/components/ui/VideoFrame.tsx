@@ -108,7 +108,7 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
       ([e]) => {
         if (e.isIntersecting) setShouldLoad(true);
       },
-      { rootMargin: "300px 0px" }
+      { rootMargin: "150px 0px" }
     );
     // próg 0: gra wszystko, co dotknęło ekranu. Ostrzejszy próg bywa niepewny
     // przy szybkim przewijaniu i zdarza się, że materiał zostaje zatrzymany.
@@ -196,6 +196,10 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
           poster={poster}
           muted={muted}
           loop={loop}
+          /* Natywny autostart: nie uzależniamy odtwarzania od tego, czy i kiedy
+             zadziała obserwator. Materiały odtwarzane na klik oraz te czekające
+             na najechanie kursorem są z tego wyłączone. */
+          autoPlay={autoPlay && !playOnHover && !reduced}
           playsInline
           preload={preload ?? (priority ? "auto" : "metadata")}
           onCanPlay={() => {
