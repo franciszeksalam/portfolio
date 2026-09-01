@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { contact, site } from "@/data/site";
 import { Reveal } from "@/components/ui/Reveal";
 import { TextLink } from "@/components/ui/Cta";
+import { trackTikTokEvent } from "@/lib/tiktok";
 
 /* 10 — KONTAKT / FINAL CTA
    Formularz leci przez własny API route (/api/kontakt) do Resend.
@@ -71,6 +72,9 @@ export function Contact() {
 
       if (res.ok) {
         setState("sent");
+        // Dopiero tutaj: backend potwierdził przyjęcie zgłoszenia.
+        // Nie przy kliknięciu, nie przed odpowiedzią, nie przy błędzie.
+        trackTikTokEvent("SubmitForm");
         return;
       }
 
