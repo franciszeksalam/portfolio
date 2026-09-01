@@ -74,6 +74,7 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
   const mutedRef = useRef(true);
   const [hovered, setHovered] = useState(false);
   const [inView, setInView] = useState(false);
+  const [ready, setReady] = useState(false);
   const reduced = usePrefersReducedMotion();
 
   /* Ref łączony: rodzic dostaje element dokładnie w momencie, w którym powstaje
@@ -124,16 +125,30 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
     };
   }, []);
 
-  /* — odtwarzanie sterowane stanem ————————————————————————————————— */
+  /* — odtwarzanie ————————————————————————————————————————————————
+     Nie polegamy wyłącznie na obserwatorze. Gdy materiał się montuje, sprawdzamy
+     położenie kadru bezpośrednio — obserwator potrafi nie zgłosić pierwszego
+     przecięcia, a to właśnie ono decyduje, czy film ruszy przy pierwszym
+     wejściu w sekcję. */
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (inView && autoPlay && !reduced && !playOnHover) {
+    if (!autoPlay || reduced || playOnHover) return;
+
+    const wKadrze = () => {
+      if (inView) return true;
+      const el = holderRef.current;
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      return r.bottom > 0 && r.top < (window.innerHeight || 0) && r.width > 0;
+    };
+
+    if (wKadrze()) {
       v.play().catch(() => {});
-    } else if (!inView && !v.paused) {
+    } else if (!v.paused) {
       v.pause();
     }
-  }, [inView, shouldLoad, autoPlay, reduced, playOnHover]);
+  }, [inView, shouldLoad, ready, autoPlay, reduced, playOnHover]);
 
   /* — materiał nieaktywny (np. druga strona przełącznika) ma stać ——— */
   useEffect(() => {
@@ -183,7 +198,10 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
           loop={loop}
           playsInline
           preload={preload ?? (priority ? "auto" : "metadata")}
-          onCanPlay={() => onReady?.()}
+          onCanPlay={() => {
+            setReady(true);
+            onReady?.();
+          }}
           onError={() => setFailed(true)}
         >
           <source src={src} type="video/mp4" />
