@@ -109,9 +109,11 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
       },
       { rootMargin: "300px 0px" }
     );
+    // próg 0: gra wszystko, co dotknęło ekranu. Ostrzejszy próg bywa niepewny
+    // przy szybkim przewijaniu i zdarza się, że materiał zostaje zatrzymany.
     const odtwarzanie = new IntersectionObserver(([e]) => setInView(e.isIntersecting), {
       rootMargin: "0px",
-      threshold: 0.25,
+      threshold: 0,
     });
 
     ladowanie.observe(el);
