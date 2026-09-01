@@ -74,6 +74,9 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
   const mutedRef = useRef(true);
   const [hovered, setHovered] = useState(false);
   const [inView, setInView] = useState(false);
+  /* Czy obserwator w ogóle się kiedykolwiek odezwał. Dopóki milczy, nie mamy
+     dowodu, że materiał jest poza kadrem — i nie wolno go zatrzymywać. */
+  const ioOdpowiedzial = useRef(false);
   const [ready, setReady] = useState(false);
   const reduced = usePrefersReducedMotion();
 
@@ -112,7 +115,10 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
     );
     // próg 0: gra wszystko, co dotknęło ekranu. Ostrzejszy próg bywa niepewny
     // przy szybkim przewijaniu i zdarza się, że materiał zostaje zatrzymany.
-    const odtwarzanie = new IntersectionObserver(([e]) => setInView(e.isIntersecting), {
+    const odtwarzanie = new IntersectionObserver(([e]) => {
+      ioOdpowiedzial.current = true;
+      setInView(e.isIntersecting);
+    }, {
       rootMargin: "0px",
       threshold: 0,
     });
@@ -145,7 +151,8 @@ export const VideoFrame = forwardRef<HTMLVideoElement, VideoFrameProps>(function
 
     if (wKadrze()) {
       v.play().catch(() => {});
-    } else if (!v.paused) {
+    } else if (!v.paused && ioOdpowiedzial.current) {
+      // pauzujemy wyłącznie mając pewność, że kadr zszedł z ekranu
       v.pause();
     }
   }, [inView, shouldLoad, ready, autoPlay, reduced, playOnHover]);
