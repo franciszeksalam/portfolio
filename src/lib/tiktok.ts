@@ -8,9 +8,9 @@ export const TIKTOK_PIXEL_ID =
   process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || "DAB8RUBC77U2FG640NI0";
 
 /** Oficjalne zdarzenia standardowe TikToka używane na tej stronie.
-    „SubmitForm" jest nadal aktywnym zdarzeniem standardowym (sprawdzone
-    w dokumentacji TikTok Ads), a „Contact" opisuje moment nawiązania kontaktu. */
-export type TikTokEvent = "SubmitForm" | "Contact";
+    „Lead" to zdarzenie konwersji wygenerowane w Events Managerze dla formularza
+    kontaktowego, „Contact" opisuje kliknięcie w CTA prowadzące do formularza. */
+export type TikTokEvent = "Lead" | "Contact";
 
 type TikTokQueue = {
   page: () => void;
@@ -77,4 +77,23 @@ export function trackTikTokEvent(
   } catch {
     /* tracking jest warstwą dodatkową — cisza jest tu właściwą reakcją */
   }
+}
+
+/* -----------------------------------------------------------------------------
+   Konwersja: wysłany formularz kontaktowy
+   -------------------------------------------------------------------------- */
+
+/** Zapora przed podwójnym zliczeniem. Flaga żyje w module, więc przetrwa
+    ponowne renderowanie komponentu i podwójne wywołanie efektów w React Strict
+    Mode. Jedna faktyczna wysyłka formularza = jeden Lead. */
+let leadJuzWyslany = false;
+
+/**
+ * Zgłasza konwersję po POTWIERDZONYM przyjęciu zgłoszenia przez API.
+ * Bez danych osobowych: żadnego e-maila, telefonu ani identyfikatorów.
+ */
+export function trackTikTokLead(): void {
+  if (leadJuzWyslany) return;
+  leadJuzWyslany = true;
+  trackTikTokEvent("Lead", {});
 }
